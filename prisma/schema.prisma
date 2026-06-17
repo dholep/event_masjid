@@ -1,0 +1,41 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Gender {
+  L
+  P
+}
+
+model EventConfig {
+  id                      Int      @id @default(autoincrement())
+  eventName               String
+  registrationDescription String   @default("Daftarkan diri Anda secara mandiri. Sistem akan memeriksa nomor WhatsApp, menampilkan CAPTCHA anti-bot, lalu membuat nomor peserta dan QR code sebagai bukti pendaftaran.")
+  successDescription      String   @default("Mohon simpan atau screenshot halaman ini sebagai bukti fisik masuk event.")
+  ikhwanGroupLink         String   @default("https://chat.whatsapp.com/J9e2mcC9nye4K8i31SX44U?s=cl&p=a&ilr=2&amv=2")
+  akhwatGroupLink         String   @default("https://chat.whatsapp.com/IVrJ2guOh8b1eynrxderxT?s=cl&p=a&ilr=2&amv=2")
+  updatedAt               DateTime @updatedAt
+}
+
+model Participant {
+  id                Int      @id @default(autoincrement())
+  participantNumber String   @unique
+  name              String
+  whatsappNumber    String   @unique
+  gender            Gender
+  createdAt         DateTime @default(now())
+  attendedAt        DateTime?
+}
+
+model Admin {
+  id           Int      @id @default(autoincrement())
+  username     String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+}

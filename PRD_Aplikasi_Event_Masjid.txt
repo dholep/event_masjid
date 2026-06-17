@@ -1,0 +1,153 @@
+PRODUCT REQUIREMENT DOCUMENT (PRD)
+Sistem Pendaftaran Event Masjid (Mosque Event Registration System)
+1. Ringkasan Proyek (Project Overview)
+Aplikasi ini adalah platform berbasis web responsif yang dirancang untuk mendata jemaah yang ingin mendaftar ke
+berbagai event yang diadakan oleh masjid. Fokus utama dari sistem ini adalah memberikan kemudahan alur
+pendaftaran bagi jemaah mandiri, proteksi dari robot/spam, serta menyediakan panel kontrol yang fleksibel bagi
+Admin Masjid untuk mengelola data peserta dan memperbarui informasi event secara dinamis.
+Tujuan Utama
+• Mempermudah jemaah melakukan pendaftaran event secara mandiri tanpa memerlukan bantuan fisik panitia.
+• Mencegah terjadinya duplikasi data pendaftar dengan validasi berbasis nomor unik WhatsApp.
+• Memberikan fleksibilitas bagi pengurus/admin masjid dalam mengubah detail event tanpa perlu mengubah
+struktur kode aplikasi.
+2. Peran Pengguna (User Roles)
+Peran Pengguna 	Deskripsi & Hak Akses
+Pendaftar (Jemaah) 	Masyarakat umum atau jemaah masjid yang mengakses halaman publik untuk
+melakukan registrasi mandiri. Tidak membutuhkan akun untuk login.
+Admin Masjid 	Pengurus takmir atau panitia event yang memiliki hak penuh untuk mengakses
+Dashboard Admin, melakukan manajemen data, serta memperbarui nama event.
+3. Alur Pengguna (User Flow)
+[MULAI] -> Halaman Utama (Menampilkan Nama Event dari Admin)
+│
+▼
+Jemaah Mengisi Form: Nama, No. WA, Jenis Kelamin -> Klik [Daftar]
+│
+▼
+Sistem Validasi Nomor WhatsApp di Database
+│
+├──► [Ditemukan] ──► Tampilkan Peringatan: "Anda Sudah Terdaftar!"
+│ 	Infokan Nomor Peserta Lama (Autonumber) -> [SELESAI]
+│
+└──► [Tidak Ditemukan]
+│
+▼
+1
+
+-- 1 of 5 --
+
+Sistem Menampilkan Tantangan CAPTCHA (Anti-Spam Bot)
+│
+├──► [Gagal] ──► Refresh CAPTCHA & Minta Isi Kembali
+│
+└──► [Berhasil]
+│
+▼
+Sistem Menyimpan Data Baru ke Database
+│
+▼
+- Generate Nomor Peserta Unik secara Otomatis
+- Generate QR Code berisi Informasi Pendaftaran
+│
+▼
+Tampilkan Halaman Sukses:
+- Nomor Peserta & QR Code Berhasil Dibuat
+- Pesan Imbauan: "Mohon simpan/screenshot halaman ini" -> [SELESAI]
+2
+
+-- 2 of 5 --
+
+4. Kebutuhan Fungsional (Functional Requirements)
+4.1 Fitur Sisi Pendaftar (Public Frontend)
+ID Fitur 	Nama Fitur 	Deskripsi & Spesifikasi Kebutuhan
+FR-01 	Tampilan Informasi
+Event
+Halaman depan secara dinamis menampilkan judul/nama event
+yang sedang aktif berdasarkan konfigurasi terakhir dari Admin.
+FR-02 	Formulir Input Data 	Menyediakan input wajib (mandatory):
+1. Nama Lengkap (Teks)
+2. Nomor WhatsApp (Angka, format standar telepon)
+3. Jenis Kelamin (Pilihan: Ikhwan/Laki-laki atau Akhwat/
+Perempuan)
+FR-03 	Sistem Validasi
+Duplikasi
+Ketika pendaftar menekan tombol submisi, sistem melakukan
+pencarian instan pada database untuk mendeteksi nomor
+WhatsApp yang diinput.
+Jika nomor sudah ada, sistem wajib menghentikan proses
+simpan dan menampilkan status warning beserta Nomor
+Peserta yang telah terdaftar sebelumnya.
+FR-04 	Verifikasi Anti-Bot 	Jika data lolos validasi keunikan nomor WA, sistem memicu pop-
+up / komponen CAPTCHA sebelum penyimpanan akhir disetujui
+guna menghindari serangan bot spam.
+FR-05 	Konfirmasi Sukses &
+QR
+Setelah verifikasi CAPTCHA berhasil:
+- Sistem membuat Nomor Peserta berurutan secara otomatis
+(*autonumber*).
+- Membuat QR Code unik berbasis teks data peserta.
+- Menampilkan ringkasan data sukses serta imbauan melakukan
+tangkapan layar (screenshot) sebagai bukti fisik masuk.
+4.2 Fitur Sisi Admin (Admin Dashboard)
+ID Fitur 	Nama Fitur 	Deskripsi & Spesifikasi Kebutuhan
+FR-06 	Autentikasi Admin 	Halaman gerbang masuk (login) tersendiri untuk memverifikasi
+username dan password pengurus masjid sebelum masuk ke
+area data sensitif.
+3
+
+-- 3 of 5 --
+
+ID Fitur 	Nama Fitur 	Deskripsi & Spesifikasi Kebutuhan
+FR-07 	Ringkasan Dashboard 	Menampilkan metrik agregat berupa total keseluruhan peserta
+terdaftar, jumlah pendaftar Ikhwan (Laki-laki), dan jumlah
+pendaftar Akhwat (Perempuan).
+FR-08 	Manajemen Data
+(CRUD)
+Menampilkan tabel komprehensif seluruh peserta dilengkapi
+kolom: Nomor Peserta, Nama, Nomor WA, Jenis Kelamin, dan
+Tanggal Daftar (*Join Date*).
+Menyediakan aksi fungsional untuk memperbarui data (*Edit*)
+maupun menghapus data (*Delete*).
+FR-09 	Konfigurasi Nama Event Halaman pengaturan khusus bagi Admin untuk mengubah
+nama/topik event secara berkala. Perubahan nama event ini
+langsung berimplikasi secara *real-time* ke judul event di
+halaman publik jemaah.
+5. Struktur Data (Data Structure)
+Untuk mendukung perancangan sistem, direkomendasikan struktur minimal dua tabel berikut:
+Tabel: `events` (Konfigurasi Event)
+Menyimpan data nama event dinamis yang dikendalikan dari dashboard admin.
+`id` (INT, Primary Key, Auto Increment)
+`event_name` (VARCHAR, 255) - Nama event aktif
+`updated_at` (TIMESTAMP) - Penanda waktu pembaruan nama event
+Tabel: `participants` (Data Pendaftar)
+Menyimpan riwayat entri jemaah masjid.
+`id` (INT, Primary Key, Auto Increment)
+`participant_number` (VARCHAR, 50, Unique) - Nomor peserta ter-generate otomatis (e.g., MSG-001)
+`name` (VARCHAR, 150) - Nama lengkap pendaftar
+`whatsapp_number` (VARCHAR, 20, Unique Index) - Nomor kontak WA utama
+`gender` (ENUM('L', 'P')) - Representasi jenis kelamin
+`created_at` (TIMESTAMP) - Tanggal dan waktu join pendaftaran
+6. Kebutuhan Non-Fungsional (Non-Functional Requirements)
+• Responsivitas Antarmuka: Dikarenakan mayoritas jemaah membuka tautan melalui perangkat seluler
+(WhatsApp share), halaman publik pendaftaran wajib menerapkan desain responsif yang optimal untuk perangkat
+mobile.
+• Keamanan Kredensial: Password akun admin wajib dienkripsi searah menggunakan algoritma hashing yang
+•
+•
+•
+•
+•
+•
+•
+•
+•
+4
+
+-- 4 of 5 --
+
+aman (seperti Bcrypt) sebelum disimpan ke dalam database.
+• Efisiensi Kueri: Proses pencarian data keunikan nomor WhatsApp wajib memiliki indeksasi yang tepat guna
+memastikan response time di bawah 1 detik demi kenyamanan pengguna.
+5
+
+-- 5 of 5 --
+
