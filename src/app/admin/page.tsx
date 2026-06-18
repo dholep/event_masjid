@@ -123,15 +123,42 @@ export default async function AdminDashboardPage() {
             </h2>
           </div>
 
+          <div className="rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-200 mb-4">
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <p className="text-sm font-semibold text-slate-700">
+                  Status Pendaftaran
+                </p>
+                <p className="text-sm text-slate-500">
+                  Buka atau tutup akses ke halaman pendaftaran
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <span
+                  className={`text-sm font-semibold ${eventConfig?.isRegistrationClosed ? "text-red-700" : "text-emerald-700"}`}
+                >
+                  {eventConfig?.isRegistrationClosed ? "Ditutup" : "Dibuka"}
+                </span>
+                <form action={toggleRegistrationAction}>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm font-semibold"
+                  >
+                    Toggle Status
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
           <form action={updateEventNameAction} className="mt-5 space-y-4">
             <div className="rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-200">
               <div className="flex items-center justify-between gap-4">
                 <div>
                   <p className="text-sm font-semibold text-slate-700">
-                    Status Pendaftaran
+                    Status Pendaftaran (Form)
                   </p>
                   <p className="text-sm text-slate-500">
-                    Buka atau tutup akses ke halaman pendaftaran
+                    Gunakan ini untuk mengatur status bersama dengan konfigurasi lain
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
@@ -150,14 +177,6 @@ export default async function AdminDashboardPage() {
                     />
                     <div className="w-14 h-8 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-slate-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-7 after:w-7 after:transition-all peer-checked:bg-red-600"></div>
                   </label>
-                  <form action={toggleRegistrationAction}>
-                    <button
-                      type="submit"
-                      className="ml-4 px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 text-sm"
-                    >
-                      [DEBUG] Toggle
-                    </button>
-                  </form>
                 </div>
               </div>
             </div>
