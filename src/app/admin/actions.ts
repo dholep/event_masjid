@@ -191,3 +191,24 @@ export async function updateParticipantAction(formData: FormData) {
   revalidatePath(`/admin/participants/${id}`);
   redirect("/admin");
 }
+
+export async function toggleRegistrationAction() {
+  await requireAdmin();
+  
+  const existingEvent = await prisma.eventConfig.findFirst({
+    orderBy: { updatedAt: "desc" },
+  });
+
+  if (!existingEvent) {
+    redirect("/admin");
+  }
+
+  await prisma.eventConfig.update({
+    where: { id: existingEvent.id },
+    data: { isRegistrationClosed: !existingEvent.isRegistrationClosed },
+  });
+
+  revalidatePath("/");
+  revalidatePath("/admin");
+  redirect("/admin");
+}

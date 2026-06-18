@@ -5,6 +5,7 @@ import {
   deleteParticipantAction,
   logoutAdminAction,
   updateEventNameAction,
+  toggleRegistrationAction,
 } from "@/app/admin/actions";
 
 export const dynamic = "force-dynamic";
@@ -149,6 +150,14 @@ export default async function AdminDashboardPage() {
                     />
                     <div className="w-14 h-8 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-slate-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-7 after:w-7 after:transition-all peer-checked:bg-red-600"></div>
                   </label>
+                  <form action={toggleRegistrationAction}>
+                    <button
+                      type="submit"
+                      className="ml-4 px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 text-sm"
+                    >
+                      [DEBUG] Toggle
+                    </button>
+                  </form>
                 </div>
               </div>
             </div>
