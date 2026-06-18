@@ -2,7 +2,12 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { createSession, clearSession, requireAdmin, validateAdminCredentials } from "@/lib/auth";
+import {
+  createSession,
+  clearSession,
+  requireAdmin,
+  validateAdminCredentials,
+} from "@/lib/auth";
 import { normalizeWhatsappNumber } from "@/lib/participants";
 import { prisma } from "@/lib/prisma";
 import { adminLoginSchema, participantSchema } from "@/lib/validation";
@@ -17,7 +22,10 @@ export async function loginAdminAction(formData: FormData) {
     redirect("/admin/login?error=invalid");
   }
 
-  const admin = await validateAdminCredentials(parsed.data.username, parsed.data.password);
+  const admin = await validateAdminCredentials(
+    parsed.data.username,
+    parsed.data.password,
+  );
   if (!admin) {
     redirect("/admin/login?error=invalid");
   }
@@ -34,11 +42,24 @@ export async function logoutAdminAction() {
 export async function updateEventNameAction(formData: FormData) {
   await requireAdmin();
   const eventName = String(formData.get("eventName") || "").trim();
-  const registrationDescription = String(formData.get("registrationDescription") || "").trim();
-  const successDescription = String(formData.get("successDescription") || "").trim();
+  const registrationDescription = String(
+    formData.get("registrationDescription") || "",
+  ).trim();
+  const successDescription = String(
+    formData.get("successDescription") || "",
+  ).trim();
   const ikhwanGroupLink = String(formData.get("ikhwanGroupLink") || "").trim();
   const akhwatGroupLink = String(formData.get("akhwatGroupLink") || "").trim();
-  const isRegistrationClosed = formData.get("isRegistrationClosed") === "on";
+  const isRegistrationClosed = !!formData.get("isRegistrationClosed");
+
+  console.log(
+    "[updateEventNameAction] formData entries:",
+    Array.from(formData.entries()),
+  );
+  console.log(
+    "[updateEventNameAction] isRegistrationClosed value:",
+    isRegistrationClosed,
+  );
 
   const isValidUrl = (value: string) => {
     try {
@@ -136,7 +157,9 @@ export async function updateParticipantAction(formData: FormData) {
   const id = Number(formData.get("id"));
   const parsed = participantSchema.safeParse({
     name: formData.get("name"),
-    whatsappNumber: normalizeWhatsappNumber(String(formData.get("whatsappNumber") || "")),
+    whatsappNumber: normalizeWhatsappNumber(
+      String(formData.get("whatsappNumber") || ""),
+    ),
     gender: formData.get("gender"),
   });
 
