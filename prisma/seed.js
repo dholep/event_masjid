@@ -11,7 +11,7 @@ const DEFAULT_AKHWAT_GROUP_LINK = "https://chat.whatsapp.com/IVrJ2guOh8b1eynrxde
 async function main() {
   const eventName = process.env.DEFAULT_EVENT_NAME || "Kajian Akbar Masjid Pekan Ini";
   const username = process.env.ADMIN_USERNAME || "admin";
-  const password = process.env.ADMIN_PASSWORD || "admin12345";
+  const password = process.env.ADMIN_PASSWORD || "@dm1nM4sj1dAnN4B4";
   const passwordHash = await bcrypt.hash(password, 10);
 
   const existingEvent = await prisma.eventConfig.findFirst();

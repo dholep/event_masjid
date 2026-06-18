@@ -6,24 +6,34 @@ import { createSession, clearSession, requireAdmin, validateAdminCredentials } f
 import { normalizeWhatsappNumber } from "@/lib/participants";
 import { prisma } from "@/lib/prisma";
 import { adminLoginSchema, participantSchema } from "@/lib/validation";
+import { verifyCaptcha } from "@/lib/captcha";
 
-export async function loginAdminAction(formData: FormData) {
+export async function loginAdminAction(data: {
+  username: string;
+  password: string;
+  captchaAnswer: string;
+}) {
+  const isCaptchaValid = await verifyCaptcha(data.captchaAnswer);
+  if (!isCaptchaValid) {
+    return { success: false, error: "invalid_captcha" };
+  }
+
   const parsed = adminLoginSchema.safeParse({
-    username: formData.get("username"),
-    password: formData.get("password"),
+    username: data.username,
+    password: data.password,
   });
 
   if (!parsed.success) {
-    redirect("/admin/login?error=invalid");
+    return { success: false, error: "invalid" };
   }
 
   const admin = await validateAdminCredentials(parsed.data.username, parsed.data.password);
   if (!admin) {
-    redirect("/admin/login?error=invalid");
+    return { success: false, error: "invalid" };
   }
 
   await createSession(admin.username);
-  redirect("/admin");
+  return { success: true };
 }
 
 export async function logoutAdminAction() {
