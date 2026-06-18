@@ -2,6 +2,8 @@ import Link from "next/link";
 import { getActiveEventConfig } from "@/lib/participants";
 import { RegistrationForm } from "@/components/registration-form";
 
+export const dynamic = 'force-dynamic';
+
 export default async function HomePage() {
   const eventConfig = await getActiveEventConfig();
 

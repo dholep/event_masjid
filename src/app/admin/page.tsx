@@ -3,6 +3,8 @@ import { requireAdmin } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { deleteParticipantAction, logoutAdminAction, updateEventNameAction } from "@/app/admin/actions";
 
+export const dynamic = 'force-dynamic';
+
 function genderLabel(gender: "L" | "P") {
   return gender === "L" ? "Ikhwan" : "Akhwat";
 }
