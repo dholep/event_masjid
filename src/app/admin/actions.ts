@@ -2,12 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import {
-  createSession,
-  clearSession,
-  requireAdmin,
-  validateAdminCredentials,
-} from "@/lib/auth";
+import { createSession, clearSession, requireAdmin, validateAdminCredentials } from "@/lib/auth";
 import { normalizeWhatsappNumber } from "@/lib/participants";
 import { prisma } from "@/lib/prisma";
 import { adminLoginSchema, participantSchema } from "@/lib/validation";
@@ -22,10 +17,7 @@ export async function loginAdminAction(formData: FormData) {
     redirect("/admin/login?error=invalid");
   }
 
-  const admin = await validateAdminCredentials(
-    parsed.data.username,
-    parsed.data.password,
-  );
+  const admin = await validateAdminCredentials(parsed.data.username, parsed.data.password);
   if (!admin) {
     redirect("/admin/login?error=invalid");
   }
@@ -39,27 +31,46 @@ export async function logoutAdminAction() {
   redirect("/admin/login");
 }
 
+export async function openRegistrationAction() {
+  await requireAdmin();
+  const existingEvent = await prisma.eventConfig.findFirst({
+    orderBy: { updatedAt: "desc" },
+  });
+  if (existingEvent) {
+    await prisma.eventConfig.update({
+      where: { id: existingEvent.id },
+      data: { isRegistrationClosed: false },
+    });
+  }
+  revalidatePath("/");
+  revalidatePath("/admin");
+  redirect("/admin");
+}
+
+export async function closeRegistrationAction() {
+  await requireAdmin();
+  const existingEvent = await prisma.eventConfig.findFirst({
+    orderBy: { updatedAt: "desc" },
+  });
+  if (existingEvent) {
+    await prisma.eventConfig.update({
+      where: { id: existingEvent.id },
+      data: { isRegistrationClosed: true },
+    });
+  }
+  revalidatePath("/");
+  revalidatePath("/admin");
+  redirect("/admin");
+}
+
 export async function updateEventNameAction(formData: FormData) {
   await requireAdmin();
   const eventName = String(formData.get("eventName") || "").trim();
-  const registrationDescription = String(
-    formData.get("registrationDescription") || "",
-  ).trim();
-  const successDescription = String(
-    formData.get("successDescription") || "",
-  ).trim();
+  const registrationDescription = String(formData.get("registrationDescription") || "").trim();
+  const successDescription = String(formData.get("successDescription") || "").trim();
   const ikhwanGroupLink = String(formData.get("ikhwanGroupLink") || "").trim();
   const akhwatGroupLink = String(formData.get("akhwatGroupLink") || "").trim();
   const isRegistrationClosed = !!formData.get("isRegistrationClosed");
-
-  console.log(
-    "[updateEventNameAction] formData entries:",
-    Array.from(formData.entries()),
-  );
-  console.log(
-    "[updateEventNameAction] isRegistrationClosed value:",
-    isRegistrationClosed,
-  );
 
   const isValidUrl = (value: string) => {
     try {
@@ -189,26 +200,5 @@ export async function updateParticipantAction(formData: FormData) {
 
   revalidatePath("/admin");
   revalidatePath(`/admin/participants/${id}`);
-  redirect("/admin");
-}
-
-export async function toggleRegistrationAction() {
-  await requireAdmin();
-  
-  const existingEvent = await prisma.eventConfig.findFirst({
-    orderBy: { updatedAt: "desc" },
-  });
-
-  if (!existingEvent) {
-    redirect("/admin");
-  }
-
-  await prisma.eventConfig.update({
-    where: { id: existingEvent.id },
-    data: { isRegistrationClosed: !existingEvent.isRegistrationClosed },
-  });
-
-  revalidatePath("/");
-  revalidatePath("/admin");
   redirect("/admin");
 }
