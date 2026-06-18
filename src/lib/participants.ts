@@ -28,6 +28,7 @@ export async function getActiveEventConfig() {
     successDescription: event?.successDescription || DEFAULT_SUCCESS_DESCRIPTION,
     ikhwanGroupLink: event?.ikhwanGroupLink || DEFAULT_IKHWAN_GROUP_LINK,
     akhwatGroupLink: event?.akhwatGroupLink || DEFAULT_AKHWAT_GROUP_LINK,
+    isRegistrationClosed: event?.isRegistrationClosed || false,
   };
 }
 
