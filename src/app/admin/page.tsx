@@ -82,6 +82,28 @@ export default async function AdminDashboardPage() {
           </div>
 
           <form action={updateEventNameAction} className="mt-5 space-y-4">
+            <div className="rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-200">
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <p className="text-sm font-semibold text-slate-700">Status Pendaftaran</p>
+                  <p className="text-sm text-slate-500">Buka atau tutup akses ke halaman pendaftaran</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className={`text-sm font-semibold ${eventConfig?.isRegistrationClosed ? "text-red-700" : "text-emerald-700"}`}>
+                    {eventConfig?.isRegistrationClosed ? "Ditutup" : "Dibuka"}
+                  </span>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      name="isRegistrationClosed"
+                      className="sr-only peer"
+                      defaultChecked={eventConfig?.isRegistrationClosed}
+                    />
+                    <div className="w-14 h-8 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-slate-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-7 after:w-7 after:transition-all peer-checked:bg-red-600"></div>
+                  </label>
+                </div>
+              </div>
+            </div>
             <div>
               <p className="mb-2 text-sm font-medium text-slate-700">Nama event</p>
             <input

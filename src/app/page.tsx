@@ -34,7 +34,19 @@ export default async function HomePage() {
         </section>
 
         <section className="rounded-3xl bg-white p-6 shadow-xl ring-1 ring-slate-200">
-          <RegistrationForm eventName={eventConfig.eventName} />
+          {eventConfig.isRegistrationClosed ? (
+            <div className="flex flex-col items-center justify-center py-12 text-center">
+              <div className="mb-6 rounded-full bg-red-100 p-4">
+                <svg className="h-16 w-16 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path>
+                </svg>
+              </div>
+              <h2 className="text-2xl font-bold text-slate-900">Pendaftaran Ditutup</h2>
+              <p className="mt-3 text-slate-600">Maaf, pendaftaran untuk event ini sudah ditutup. Terima kasih atas minat Anda!</p>
+            </div>
+          ) : (
+            <RegistrationForm eventName={eventConfig.eventName} />
+          )}
         </section>
       </div>
     </main>

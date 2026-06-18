@@ -1,9 +1,15 @@
 import { NextResponse } from "next/server";
 import { verifyCaptcha } from "@/lib/captcha";
-import { normalizeWhatsappNumber, registerParticipant } from "@/lib/participants";
+import { normalizeWhatsappNumber, registerParticipant, getActiveEventConfig } from "@/lib/participants";
 import { participantSchema } from "@/lib/validation";
 
 export async function POST(request: Request) {
+  const eventConfig = await getActiveEventConfig();
+  
+  if (eventConfig.isRegistrationClosed) {
+    return NextResponse.json({ message: "Pendaftaran sudah ditutup." }, { status: 403 });
+  }
+
   const body = (await request.json()) as {
     name?: string;
     whatsappNumber?: string;

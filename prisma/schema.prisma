@@ -20,6 +20,7 @@ model EventConfig {
   successDescription      String   @default("Mohon simpan atau screenshot halaman ini sebagai bukti fisik masuk event.")
   ikhwanGroupLink         String   @default("https://chat.whatsapp.com/J9e2mcC9nye4K8i31SX44U?s=cl&p=a&ilr=2&amv=2")
   akhwatGroupLink         String   @default("https://chat.whatsapp.com/IVrJ2guOh8b1eynrxderxT?s=cl&p=a&ilr=2&amv=2")
+  isRegistrationClosed    Boolean  @default(false)
   updatedAt               DateTime @updatedAt
 }
 

@@ -38,6 +38,7 @@ export async function updateEventNameAction(formData: FormData) {
   const successDescription = String(formData.get("successDescription") || "").trim();
   const ikhwanGroupLink = String(formData.get("ikhwanGroupLink") || "").trim();
   const akhwatGroupLink = String(formData.get("akhwatGroupLink") || "").trim();
+  const isRegistrationClosed = formData.get("isRegistrationClosed") === "on";
 
   const isValidUrl = (value: string) => {
     try {
@@ -70,6 +71,7 @@ export async function updateEventNameAction(formData: FormData) {
         successDescription,
         ikhwanGroupLink,
         akhwatGroupLink,
+        isRegistrationClosed,
       },
     });
   } else {
@@ -81,6 +83,7 @@ export async function updateEventNameAction(formData: FormData) {
         successDescription,
         ikhwanGroupLink,
         akhwatGroupLink,
+        isRegistrationClosed,
       },
     });
   }
