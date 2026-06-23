@@ -237,7 +237,15 @@ export default async function AdminDashboardPage() {
                 Daftar Pendaftar Terbaru
               </h2>
             </div>
-            <p className="text-sm text-slate-500">Total: {participants.length} orang</p>
+            <div className="flex items-center gap-4">
+              <p className="text-sm text-slate-500">Total: {participants.length} orang</p>
+              <a
+                href="/api/admin/participants/download-excel"
+                className="rounded-xl bg-blue-600 px-5 py-3 font-semibold text-white hover:bg-blue-700 transition-all"
+              >
+                Download Excel
+              </a>
+            </div>
           </div>
           <div className="mt-6 overflow-x-auto">
             <table className="min-w-full divide-y divide-slate-200 text-left text-sm">
